@@ -13,9 +13,9 @@ class EntityDTOUtil {
             userId = request.userId,
             amount = amount,
             type = if (request.tradeType == TradeType.BUY) {
-                TransactionType.CREDIT
+                TransactionType.BUY
             } else {
-                TransactionType.DEBIT
+                TransactionType.SELL
             }
         )
 

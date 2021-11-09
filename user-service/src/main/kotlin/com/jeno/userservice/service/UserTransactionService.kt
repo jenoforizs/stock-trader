@@ -20,10 +20,10 @@ class UserTransactionService {
     lateinit var repository: UserRepository
 
     fun doTransaction(request: TransactionRequest): Mono<TransactionResponse> {
-        val operation = if (request.type == TransactionType.CREDIT) {
-            credit(request)
+        val operation = if (request.type == TransactionType.BUY) {
+            buy(request)
         } else {
-            debit(request)
+            sell(request)
         }
 
         return repository.findById(request.userId)
@@ -33,13 +33,13 @@ class UserTransactionService {
             .defaultIfEmpty(EntityDtoUtil.toResponse(request, TransactionStatus.FAILED))
     }
 
-    private fun credit(request: TransactionRequest) = UnaryOperator<Mono<UserEntity>> { userMono: Mono<UserEntity> ->
+    private fun sell(request: TransactionRequest) = UnaryOperator<Mono<UserEntity>> { userMono: Mono<UserEntity> ->
         userMono
             .doOnNext { it.balance += request.amount }
     }
 
 
-    private fun debit(request: TransactionRequest) = UnaryOperator<Mono<UserEntity>> { userMono: Mono<UserEntity> ->
+    private fun buy(request: TransactionRequest) = UnaryOperator<Mono<UserEntity>> { userMono: Mono<UserEntity> ->
         userMono
             .filter { it.balance >= request.amount }
             .doOnNext { it.balance -= request.amount }

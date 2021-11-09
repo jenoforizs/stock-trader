@@ -2,6 +2,7 @@ package com.jeno.tradingservice.controller
 
 import com.jeno.tradingservice.client.UserClient
 import com.jeno.tradingservice.dto.UserStockDto
+import com.jeno.tradingservice.dto.UserStockEstimatedValueDto
 import com.jeno.tradingservice.service.UserStockService
 import com.jeno.userservice.dto.UserDto
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,4 +25,6 @@ class UserController(val userClient: UserClient, val userStockService: UserStock
     @GetMapping("{userId}/stocks")
     fun getAllStockByUserId(@PathVariable userId: String): Flux<UserStockDto> = userStockService.getUserStocks(userId)
 
+    @GetMapping("{userId}/stocks/estimatedvalue")
+    fun getEstimatedStockValueByUserId(@PathVariable userId: String): Flux<UserStockEstimatedValueDto> = userStockService.getUserStocksEstimatedValue(userId)
 }

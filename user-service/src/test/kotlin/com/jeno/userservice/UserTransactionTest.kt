@@ -30,7 +30,7 @@ class UserTransactionTest {
     fun test0001_transaction_credit() {
         val user = getRandomUser()
 
-        val request = TransactionRequest(user.id!!, 2000, TransactionType.CREDIT)
+        val request = TransactionRequest(user.id!!, 2000, TransactionType.BUY)
 
         val response = requester.route("user.transaction")
             .data(request)
@@ -60,9 +60,9 @@ class UserTransactionTest {
     }
 
     private fun testData() = Stream.of(
-        Arguments.of(2000, TransactionType.CREDIT, TransactionStatus.COMPLETED),
-        Arguments.of(2000, TransactionType.DEBIT, TransactionStatus.COMPLETED),
-        Arguments.of(120000, TransactionType.DEBIT, TransactionStatus.FAILED),
+        Arguments.of(2000, TransactionType.BUY, TransactionStatus.COMPLETED),
+        Arguments.of(2000, TransactionType.SELL, TransactionStatus.COMPLETED),
+        Arguments.of(120000, TransactionType.SELL, TransactionStatus.FAILED),
     )
 
     private fun getRandomUser() = requester.route("user.get.all")

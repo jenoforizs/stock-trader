@@ -1,7 +1,9 @@
 package com.jeno.tradingservice.service
 
+import com.jeno.tradingservice.client.StockClient
 import com.jeno.tradingservice.dto.StockTradeRequest
 import com.jeno.tradingservice.dto.UserStockDto
+import com.jeno.tradingservice.dto.UserStockEstimatedValueDto
 import com.jeno.tradingservice.entity.UserStockEntity
 import com.jeno.tradingservice.repository.UserStockRepository
 import com.jeno.tradingservice.util.EntityDTOUtil
@@ -10,7 +12,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
-class UserStockService(val stockRepository: UserStockRepository) {
+class UserStockService(val stockRepository: UserStockRepository, val stockClient: StockClient) {
 
     fun buyStock(request: StockTradeRequest): Mono<UserStockEntity> = stockRepository.findByUserIdAndStockSymbol(request.userId, request.stockSymbol)
         .defaultIfEmpty(EntityDTOUtil.toUserStock(request))
@@ -34,4 +36,14 @@ class UserStockService(val stockRepository: UserStockRepository) {
 
     fun getUserStocks(userId: String): Flux<UserStockDto> = stockRepository.findByUserId(userId)
         .map { EntityDTOUtil.toUserStockDto(it) }
+
+    fun getUserStocksEstimatedValue(userId: String): Flux<UserStockEstimatedValueDto> = stockRepository.findByUserId(userId)
+        .map {
+            UserStockEstimatedValueDto(
+                it.stockSymbol,
+                it.quantity,
+                it.quantity * stockClient.getCurrentStockPrice(it.stockSymbol)
+            )
+        }
+
 }
